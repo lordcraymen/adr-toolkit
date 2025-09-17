@@ -1,0 +1,53 @@
+{
+  "name": "@lordcraymen/adr-toolkit",
+  "version": "0.1.0",
+  "description": "CLI tooling to bootstrap, validate and publish Architecture Decision Records.",
+  "type": "module",
+  "main": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./cli": "./dist/cli.js",
+    "./presets/depcruise": "./presets/depcruise.cjs",
+    "./presets/eslint-boundaries": "./presets/eslint-boundaries.cjs",
+    "./templates/adr/ADR-0000-template.md": "./templates/adr/ADR-0000-template.md",
+    "./templates/dependency-cruiser": "./templates/.dependency-cruiser.js",
+    "./templates/pull-request": "./templates/PULL_REQUEST_TEMPLATE.md",
+    "./templates/agent-rules-snippet": "./templates/AGENT_RULES-snippet.md"
+  },
+  "bin": {
+    "adrx": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsup",
+    "lint": "eslint \"src/**/*.ts\"",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test test/basic.test.mjs",
+    "prepare": "npm run build"
+  },
+  "files": [
+    "dist",
+    "templates",
+    "presets"
+  ],
+  "keywords": [
+    "adr",
+    "architecture decision records",
+    "cli",
+    "documentation"
+  ],
+  "author": "Lord Craymen",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^11.1.0",
+    "fast-glob": "^3.3.2",
+    "gray-matter": "^4.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.57.0",
+    "tsup": "^8.0.2",
+    "typescript": "5.3.3"
+  }
+}
