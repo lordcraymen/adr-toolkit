@@ -36,6 +36,7 @@
     "documentation"
   ],
   "author": "Florian 'lordcraymen' Patzke",
+  "homepage": "https://github.com/lordcraymen/adr-toolkit#readme",
   "license": "MIT",
   "dependencies": {
     "commander": "^11.1.0",
