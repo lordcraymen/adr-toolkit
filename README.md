@@ -1,6 +1,6 @@
 # @lordcraymen/adr-toolkit
 
-A batteries-included CLI to bootstrap, lint and publish Architecture Decision Records (ADRs). Install it in any repository to automate ADR workflows and ship documentation alongside your code.
+A batteries-included CLI to bootstrap, lint, and publish Architecture Decision Records (ADRs). You can just install it in any repository to automate ADR workflows and ship documentation alongside your code.
 
 ## Installation
 
@@ -24,7 +24,7 @@ Idempotently scaffolds ADR directories and helper templates:
 
 ### `adrx build`
 
-Parses ADR Markdown files and emits machine readable artifacts:
+Parses ADR Markdown files and emits machine-readable artifacts:
 
 - `docs/adr/index.json` – metadata for every ADR (status, tags, summary, etc.).
 - `docs/adr/ACTIVE.md` – Markdown table with currently active ADRs.
@@ -36,7 +36,7 @@ Validates ADR frontmatter:
 
 - Ensures `title`, `status`, and `summary` are present.
 - Accepts a configurable set of statuses (Accepted, Proposed, Draft, Rejected, Deprecated, Superseded).
-- Enforces a 300 character summary limit.
+- Enforces a 300-character summary limit.
 
 ### `adrx affected --base <ref>`
 
@@ -48,18 +48,18 @@ Diffs the working tree against a git reference and reports ADRs affected by the 
 
 ### `adrx pr-comment`
 
-Posts the accepted ADR digest as a pull request comment when `GITHUB_TOKEN`, `GITHUB_REPOSITORY`, and PR metadata are available (e.g. within GitHub Actions). Without the necessary secrets it logs a short message and exits without failing the build.
+Posts the accepted ADR digest as a pull request comment when `GITHUB_TOKEN`, `GITHUB_REPOSITORY`, and PR metadata are available (e.g., within GitHub Actions). Without the necessary secrets, it logs a short message and exits without failing the build.
 
 ## Presets and templates
 
-- `presets/depcruise.cjs` – dependency-cruiser layering rules to keep UI, application and domain code separated.
+- `presets/depcruise.cjs` – dependency-cruiser layering rules to keep UI, application, and domain code separated.
 - `presets/eslint-boundaries.cjs` – minimal ESLint preset using the `eslint-plugin-boundaries` conventions.
 - `templates/adr/ADR-0000-template.md` – MADR-inspired ADR template with YAML frontmatter.
 - `templates/.dependency-cruiser.js`, `templates/PULL_REQUEST_TEMPLATE.md`, `templates/AGENT_RULES-snippet.md` – helper scaffolding applied during `adrx init`.
 
 Import the presets from Node using the exposed export paths:
 
-```js
+``` js
 import depcruise from '@lordcraymen/adr-toolkit/presets/depcruise.cjs';
 ```
 
@@ -76,8 +76,8 @@ Each helper accepts an optional working directory argument so you can run the to
 
 ## Continuous Integration
 
-A reusable GitHub Actions workflow lives at `.github/workflows/ci.yml`. It runs on Node.js 18, 20 and 22 using `npm ci` followed by `lint`, `typecheck`, `test`, and `build`.
+A reusable GitHub Actions workflow lives at `.github/workflows/ci.yml`. It runs on Node.js 18, 20, and 22 using `npm ci` followed by `lint`, `typecheck`, `test`, and `build`.
 
 ## License
 
-MIT © Lord Craymen
+MIT © Florian "lordcraymen" Patzke
