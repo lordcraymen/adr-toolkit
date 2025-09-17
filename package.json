@@ -35,7 +35,7 @@
     "cli",
     "documentation"
   ],
-  "author": "Lord Craymen",
+  "author": "Florian 'lordcraymen' Patzke",
   "license": "MIT",
   "dependencies": {
     "commander": "^11.1.0",
