@@ -14,8 +14,5 @@ export default defineConfig({
       index: 'src/index.ts'
     }
   },
-  target: 'node18',
-  banner: {
-    js: '#!/usr/bin/env node'
-  }
+  target: 'node18'
 });
