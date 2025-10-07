@@ -1,3 +1,17 @@
+---
+title: "ADR-0001: Automated NPM Releases with Semantic Release"
+date: "2024-01-01"
+status: "Accepted"
+tags:
+  - automation
+  - npm
+  - ci-cd
+modules:
+  - .github/
+summary: >-
+  Implement Semantic Release for automated NPM publishing with version management and changelog generation.
+---
+
 # ADR-0001: Automated NPM Releases with Semantic Release
 
 ## Status
