@@ -11,7 +11,7 @@ export interface InitResult {
   skipped: string[];
 }
 
-async function handleAdrGuidelines(cwd: string): Promise<{ created: boolean; skipped: boolean }> {
+async function handleAdrGuidelines(cwd: string, options: { interactive?: boolean } = {}): Promise<{ created: boolean; skipped: boolean }> {
   const templateSource = path.join(templateRoot, 'ADR_GUIDELINES.md');
   const targetPath = path.join(cwd, 'docs', 'ADR_GUIDELINES.md');
   
@@ -27,7 +27,13 @@ async function handleAdrGuidelines(cwd: string): Promise<{ created: boolean; ski
     return { created: false, skipped: true };
   }
   
-  // File exists and has been modified, prompt user
+  // File exists and has been modified
+  if (options.interactive === false) {
+    // Non-interactive mode (tests): don't overwrite, just skip
+    return { created: false, skipped: true };
+  }
+  
+  // Interactive mode: prompt user
   const shouldOverwrite = await promptYesNo(
     'An ADR_GUIDELINES.md already exists in /docs and has been modified. Do you want to overwrite it?',
     false // Default to 'No' for safety
@@ -52,7 +58,7 @@ const FILES_TO_COPY: Array<{ source: string; target: string }> = [
   { source: 'adrx.config.json', target: '.adrx.config.json' }
 ];
 
-export async function initWorkspace(cwd: string = process.cwd()): Promise<InitResult> {
+export async function initWorkspace(cwd: string = process.cwd(), options: { interactive?: boolean } = {}): Promise<InitResult> {
   const created: string[] = [];
   const skipped: string[] = [];
 
@@ -82,7 +88,7 @@ export async function initWorkspace(cwd: string = process.cwd()): Promise<InitRe
   }
 
   // Handle ADR Guidelines with smart prompting
-  const guidelinesResult = await handleAdrGuidelines(cwd);
+  const guidelinesResult = await handleAdrGuidelines(cwd, options);
   if (guidelinesResult.created) {
     created.push('docs/ADR_GUIDELINES.md');
   } else if (guidelinesResult.skipped) {
