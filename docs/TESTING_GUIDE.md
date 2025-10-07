@@ -67,8 +67,8 @@ The ADR Toolkit now features a professional, comprehensive test system with **80
 
 ## BDD/Gherkin Features 📝
 
-### 7 Feature Files (German Language)
-Comprehensive behavior-driven development scenarios written in German:
+### 7 Feature Files
+Comprehensive behavior-driven development scenarios:
 
 1. **`adr-initialization.feature`** - Workspace setup scenarios
 2. **`adr-validation.feature`** - Validation and error handling
@@ -150,28 +150,28 @@ export default defineConfig({
 - **Integration Tests**: Critical workflow paths
 - **E2E Tests**: User-facing scenarios and CLI interactions
 
-## German Gherkin Examples 🇩🇪
+## Gherkin Examples
 
-All feature files use German Gherkin syntax for native language BDD:
+All feature files use English Gherkin syntax for BDD:
 
 ```gherkin
-Funktionalität: ADR Validierung
-  Als Entwickler
-  Möchte ich ADR-Dateien validieren können
-  Damit die Qualität und Konsistenz sichergestellt ist
+Feature: ADR Validation
+  As a developer
+  I want to validate ADR files
+  So that quality and consistency are ensured
 
-  Szenario: Validierung korrekter ADR-Dateien
-    Angenommen ich habe ein ADR mit korrektem Format
-    Und alle erforderlichen Felder sind ausgefüllt
-    Wenn ich die Validierung ausführe
-    Dann sollten keine Fehler angezeigt werden
-    Und der Exit-Code sollte 0 sein
+  Scenario: Validation of correct ADR files
+    Given I have an ADR with correct format
+    And all required fields are filled out
+    When I execute the validation
+    Then no errors should be displayed
+    And the exit code should be 0
 
-  Szenario: Behandlung ungültiger Status-Werte
-    Angenommen ich habe ein ADR mit ungültigem Status
-    Wenn ich die Validierung ausführe
-    Dann sollte ein Fehler über den ungültigen Status angezeigt werden
-    Und der Exit-Code sollte 1 sein
+  Scenario: Handling invalid status values
+    Given I have an ADR with invalid status
+    When I execute the validation
+    Then an error about the invalid status should be displayed
+    And the exit code should be 1
 ```
 
 ## Quality Assurance ✨
