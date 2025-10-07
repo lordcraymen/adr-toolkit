@@ -63,7 +63,7 @@ program
     await runPrComment();
   });
 
-// Configuration management commands (TODO: implement when config system is ready)
+// Configuration management commands
 const configCmd = program
   .command('config')
   .description('Manage ADR configuration');
@@ -72,24 +72,24 @@ configCmd
   .command('init')
   .description('Initialize default .adrx.config.json configuration file')
   .action(async () => {
-    console.log('TODO: Implement config init command');
-    console.log('This will create .adrx.config.json with default status configuration');
+    const { runConfigInit } = await import('./config-cli.js');
+    await runConfigInit();
   });
 
 configCmd
   .command('validate')
   .description('Validate current configuration file')
   .action(async () => {
-    console.log('TODO: Implement config validate command');
-    console.log('This will validate .adrx.config.json against the schema');
+    const { runConfigValidate } = await import('./config-cli.js');
+    await runConfigValidate();
   });
 
 configCmd
   .command('show')
   .description('Display current configuration')
   .action(async () => {
-    console.log('TODO: Implement config show command');
-    console.log('This will display the effective configuration being used');
+    const { runConfigShow } = await import('./config-cli.js');
+    await runConfigShow();
   });
 
 program.parseAsync(process.argv).catch((error: unknown) => {
