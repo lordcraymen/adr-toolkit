@@ -1,24 +1,55 @@
 {
-  "generatedAt": "2025-10-07T11:23:58.001Z",
-  "total": 2,
+  "generatedAt": "2025-10-07T17:32:06.407Z",
+  "total": 3,
   "adrs": [
     {
       "id": "ADR-0001",
       "title": "ADR-0001: Automated NPM Releases with Semantic Release",
-      "status": "",
-      "summary": "",
-      "tags": [],
-      "modules": [],
+      "status": "Accepted",
+      "summary": "Implement Semantic Release for automated NPM publishing with version management and changelog generation.",
+      "date": "2024-01-01",
+      "tags": [
+        "automation",
+        "npm",
+        "ci-cd"
+      ],
+      "modules": [
+        ".github/"
+      ],
       "path": "docs/adr/ADR-0001-automated-npm-releases-with-semantic-release.md"
     },
     {
       "id": "ADR-0002",
       "title": "ADR-0002: English as Primary Language for Documentation and Comments",
-      "status": "",
-      "summary": "",
-      "tags": [],
-      "modules": [],
+      "status": "Accepted",
+      "summary": "Establish English as the mandatory language for all project documentation, comments, and textual content.",
+      "date": "2024-01-02",
+      "tags": [
+        "documentation",
+        "internationalization",
+        "standards"
+      ],
+      "modules": [
+        "docs/",
+        "src/"
+      ],
       "path": "docs/adr/ADR-0002-english-as-primary-language-for-documentation-and-comments.md"
+    },
+    {
+      "id": "ADR-0003",
+      "title": "ADR-0003: Configurable Status Management",
+      "status": "Proposed",
+      "summary": "Implement configurable status management to support organization-specific ADR workflows and external system integration.",
+      "date": "2025-10-07",
+      "tags": [
+        "architecture",
+        "configuration",
+        "workflow"
+      ],
+      "modules": [
+        "src/"
+      ],
+      "path": "docs/adr/ADR-0003-configurable-status-management.md"
     }
   ]
 }

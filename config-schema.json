@@ -1,0 +1,117 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ADRX Configuration",
+  "description": "Configuration for ADR Toolkit status management and workflows",
+  "type": "object",
+  "properties": {
+    "statuses": {
+      "type": "object",
+      "description": "Custom status definitions with workflow properties",
+      "patternProperties": {
+        "^[a-zA-Z][a-zA-Z0-9-_]*$": {
+          "type": "object",
+          "properties": {
+            "active": {
+              "type": "boolean",
+              "description": "Whether ADRs with this status appear in ACTIVE.md",
+              "default": true
+            },
+            "includeInDigest": {
+              "type": "boolean", 
+              "description": "Whether ADRs with this status appear in digest.json",
+              "default": false
+            },
+            "allowTransitionTo": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Valid next statuses for workflow enforcement"
+            },
+            "description": {
+              "type": "string",
+              "description": "Human-readable description of this status"
+            },
+            "color": {
+              "type": "string",
+              "pattern": "^#[0-9A-Fa-f]{6}$",
+              "description": "Hex color for visual representation"
+            },
+            "requiresApproval": {
+              "type": "boolean",
+              "description": "Whether this status requires approval workflow",
+              "default": false
+            }
+          },
+          "required": ["active", "includeInDigest"],
+          "additionalProperties": false
+        }
+      },
+      "minProperties": 1
+    },
+    "validation": {
+      "type": "object",
+      "properties": {
+        "summaryLimit": {
+          "type": "number",
+          "minimum": 1,
+          "description": "Maximum character limit for ADR summaries",
+          "default": 300
+        },
+        "requiredFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Required frontmatter fields",
+          "default": ["title", "status", "summary"]
+        },
+        "strictWorkflow": {
+          "type": "boolean",
+          "description": "Enforce status transitions defined in allowTransitionTo",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "integrations": {
+      "type": "object",
+      "properties": {
+        "jira": {
+          "type": "object",
+          "properties": {
+            "statusMapping": {
+              "type": "object",
+              "patternProperties": {
+                ".*": {
+                  "type": "string"
+                }
+              },
+              "description": "Map ADR statuses to JIRA statuses"
+            },
+            "webhookUrl": {
+              "type": "string",
+              "format": "uri",
+              "description": "JIRA webhook URL for status updates"
+            }
+          }
+        },
+        "confluence": {
+          "type": "object",
+          "properties": {
+            "spaceKey": {
+              "type": "string",
+              "description": "Confluence space for ADR publishing"
+            },
+            "parentPageId": {
+              "type": "string",
+              "description": "Parent page ID for ADR organization"
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": ["statuses"],
+  "additionalProperties": false
+}

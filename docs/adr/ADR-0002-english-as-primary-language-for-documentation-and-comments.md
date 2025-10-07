@@ -1,3 +1,18 @@
+---
+title: "ADR-0002: English as Primary Language for Documentation and Comments"
+date: "2024-01-02"
+status: "Accepted"
+tags:
+  - documentation
+  - internationalization
+  - standards
+modules:
+  - docs/
+  - src/
+summary: >-
+  Establish English as the mandatory language for all project documentation, comments, and textual content.
+---
+
 # ADR-0002: English as Primary Language for Documentation and Comments
 
 ## Status
