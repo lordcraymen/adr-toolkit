@@ -19,8 +19,9 @@ Run `npx adrx --help` to inspect the full help output.
 Idempotently scaffolds ADR directories and helper templates:
 
 - `docs/adr/` with a README and template copy (`docs/adr/templates/ADR-0000-template.md`).
+- `docs/ADR_GUIDELINES.md` with AI assistant guidelines (prompts for overwrite if modified).
 - `.dependency-cruiser.js` wired to the provided dependency-cruiser preset.
-- `.github/PULL_REQUEST_TEMPLATE.md` and `AGENT_RULES-snippet.md` for contributor guidance.
+- `.github/PULL_REQUEST_TEMPLATE.md` for contributor guidance.
 
 ### `adrx build`
 
@@ -66,8 +67,9 @@ The configuration file allows you to customize allowed ADR statuses, validation 
 - `presets/depcruise.cjs` – dependency-cruiser layering rules to keep UI, application, and domain code separated.
 - `presets/eslint-boundaries.cjs` – minimal ESLint preset using the `eslint-plugin-boundaries` conventions.
 - `templates/adr/ADR-0000-template.md` – MADR-inspired ADR template with YAML frontmatter.
+- `templates/ADR_GUIDELINES.md` – AI assistant guidelines template for working with ADRs.
 - `templates/adrx.config.json` – default configuration template with customizable settings.
-- `templates/.dependency-cruiser.js`, `templates/PULL_REQUEST_TEMPLATE.md`, `templates/AGENT_RULES-snippet.md` – helper scaffolding applied during `adrx init`.
+- `templates/.dependency-cruiser.js`, `templates/PULL_REQUEST_TEMPLATE.md` – helper scaffolding applied during `adrx init`.
 
 Import the presets from Node using the exposed export paths:
 

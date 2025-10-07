@@ -1,4 +1,4 @@
-import { mkdir, stat, writeFile, copyFile } from 'node:fs/promises';
+import { mkdir, stat, writeFile, copyFile, readFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 
 export async function ensureDir(path: string): Promise<void> {
@@ -29,4 +29,16 @@ export async function copyFileIfMissing(source: string, target: string): Promise
   await ensureDir(dirname(target));
   await copyFile(source, target);
   return true;
+}
+
+export async function filesHaveSameContent(path1: string, path2: string): Promise<boolean> {
+  try {
+    const [content1, content2] = await Promise.all([
+      readFile(path1, 'utf8'),
+      readFile(path2, 'utf8')
+    ]);
+    return content1 === content2;
+  } catch {
+    return false;
+  }
 }
