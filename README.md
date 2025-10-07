@@ -81,3 +81,4 @@ A reusable GitHub Actions workflow lives at `.github/workflows/ci.yml`. It runs 
 ## License
 
 MIT © Florian "lordcraymen" Patzke
+
