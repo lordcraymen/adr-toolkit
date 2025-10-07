@@ -27,7 +27,7 @@ describe('Workflow Integration', () => {
   describe('Complete ADR Workflow', () => {
     it('should support full ADR lifecycle', async () => {
       // Step 1: Initialize workspace
-      const initResult = await initWorkspace(tempDir);
+      const initResult = await initWorkspace(tempDir, { interactive: false });
       expect(initResult.created.length).toBeGreaterThan(0);
 
       // Step 2: Create an ADR
@@ -86,7 +86,7 @@ We will use PostgreSQL as our primary database.
 
     it('should handle invalid ADR creation and correction', async () => {
       // Initialize workspace
-      await initWorkspace(tempDir);
+      await initWorkspace(tempDir, { interactive: false });
 
       // Create invalid ADR (missing required fields)
       const invalidAdr = `---
@@ -129,7 +129,7 @@ This ADR is now valid.
     });
 
     it('should handle multiple ADRs with different statuses', async () => {
-      await initWorkspace(tempDir);
+      await initWorkspace(tempDir, { interactive: false });
 
       // Create multiple ADRs with different statuses
       const adrs = [
@@ -203,7 +203,7 @@ summary: "This decision is no longer relevant."
   describe('Git Integration Workflow', () => {
     it('should validate ADR module structure without git operations', async () => {
       // Initialize ADR workspace
-      await initWorkspace(tempDir);
+      await initWorkspace(tempDir, { interactive: false });
 
       // Create ADR with module dependencies
       const adr = `---
@@ -235,7 +235,7 @@ We use React for frontend development.
     });
 
     it('should handle ADR parsing and validation correctly', async () => {
-      await initWorkspace(tempDir);
+      await initWorkspace(tempDir, { interactive: false });
 
       // Create ADR with various metadata
       const adr = `---
@@ -261,7 +261,7 @@ summary: "Choosing database technology."
     });
 
     it('should support multiple ADRs with different metadata', async () => {
-      await initWorkspace(tempDir);
+      await initWorkspace(tempDir, { interactive: false });
 
       // Create multiple ADRs with different dependencies
       const frontendAdr = `---

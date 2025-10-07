@@ -61,7 +61,7 @@ describe('CLI End-to-End Tests', () => {
       expect(await pathExists(join(tempDir, 'docs', 'adr', 'templates', 'ADR-0000-template.md'))).toBe(true);
       expect(await pathExists(join(tempDir, '.dependency-cruiser.js'))).toBe(true);
       expect(await pathExists(join(tempDir, '.github', 'PULL_REQUEST_TEMPLATE.md'))).toBe(true);
-      expect(await pathExists(join(tempDir, 'AGENT_RULES-snippet.md'))).toBe(true);
+      expect(await pathExists(join(tempDir, 'docs', 'ADR_GUIDELINES.md'))).toBe(true);
     });
 
     it('should skip existing files on re-initialization', async () => {
