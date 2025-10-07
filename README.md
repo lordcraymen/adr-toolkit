@@ -8,7 +8,7 @@ A batteries-included CLI to bootstrap, lint, and publish Architecture Decision R
 npm install --save-dev @lordcraymen/adr-toolkit
 ```
 
-The package ships ESM builds and exposes the `adrx` executable via the `bin` field. It also registers a `prepare` hook so the bundled CLI is ready after install.
+The package ships ESM builds and exposes the `adrx` executable via the `bin` field.
 
 ## CLI usage
 
@@ -35,8 +35,9 @@ Parses ADR Markdown files and emits machine-readable artifacts:
 Validates ADR frontmatter:
 
 - Ensures `title`, `status`, and `summary` are present.
-- Accepts a configurable set of statuses (Accepted, Proposed, Draft, Rejected, Deprecated, Superseded).
+- Validates against a configurable set of allowed statuses (default: accepted, approved, proposed, draft, rejected, deprecated, superseded).
 - Enforces a 300-character summary limit.
+- Uses `.adrx.config.json` configuration if available for custom validation rules.
 
 ### `adrx affected --base <ref>`
 
@@ -50,11 +51,22 @@ Diffs the working tree against a git reference and reports ADRs affected by the 
 
 Posts the accepted ADR digest as a pull request comment when `GITHUB_TOKEN`, `GITHUB_REPOSITORY`, and PR metadata are available (e.g., within GitHub Actions). Without the necessary secrets, it logs a short message and exits without failing the build.
 
+### `adrx config`
+
+Manage ADR configuration through the `.adrx.config.json` file:
+
+- `adrx config init` – Initialize a default configuration file with customizable status values and other settings.
+- `adrx config validate` – Validate the current configuration file against the schema.
+- `adrx config show` – Display the current effective configuration.
+
+The configuration file allows you to customize allowed ADR statuses, validation rules, and output formats.
+
 ## Presets and templates
 
 - `presets/depcruise.cjs` – dependency-cruiser layering rules to keep UI, application, and domain code separated.
 - `presets/eslint-boundaries.cjs` – minimal ESLint preset using the `eslint-plugin-boundaries` conventions.
 - `templates/adr/ADR-0000-template.md` – MADR-inspired ADR template with YAML frontmatter.
+- `templates/adrx.config.json` – default configuration template with customizable settings.
 - `templates/.dependency-cruiser.js`, `templates/PULL_REQUEST_TEMPLATE.md`, `templates/AGENT_RULES-snippet.md` – helper scaffolding applied during `adrx init`.
 
 Import the presets from Node using the exposed export paths:
@@ -68,11 +80,12 @@ import depcruise from '@lordcraymen/adr-toolkit/presets/depcruise.cjs';
 The toolkit also exposes programmatic helpers:
 
 - `loadAdrs()` – parse ADR Markdown into structured objects.
-- `validateAdrs()` – return an array of validation errors.
-- `createDigest()` and `buildArtifacts()` – generate JSON/Markdown digests for custom pipelines.
-- `runAffected()`, `runCheck()`, `runBuild()`, `runPrComment()` – the same routines invoked by the CLI.
+- `validateAdrs()` and `validateAdrsWithConfig()` – return an array of validation errors, with optional custom configuration.
+- `createDigest()`, `createDigestWithConfig()` and `buildArtifacts()`, `buildArtifactsWithConfig()` – generate JSON/Markdown digests for custom pipelines, with optional configuration support.
+- `runAffected()`, `runCheck()`, `runBuild()`, `runBuildWithConfig()`, `runPrComment()` – the same routines invoked by the CLI.
+- Configuration helpers: `loadConfig()`, `validateConfig()` – load and validate `.adrx.config.json` files.
 
-Each helper accepts an optional working directory argument so you can run the tooling from scripts or tests.
+Each helper accepts an optional working directory argument so you can run the tooling from scripts or tests. The `*WithConfig` variants allow you to pass custom configuration objects for advanced use cases.
 
 ## Continuous Integration
 
