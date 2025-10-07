@@ -19,12 +19,12 @@ describe('Workspace Initialization', () => {
 
   describe('initWorkspace', () => {
     it('should create all required files and directories', async () => {
-      const result = await initWorkspace(tempDir);
+      const result = await initWorkspace(tempDir, { interactive: false });
 
       expect(result.created).toContain('docs/adr/templates/ADR-0000-template.md');
       expect(result.created).toContain('.dependency-cruiser.js');
       expect(result.created).toContain('.github/PULL_REQUEST_TEMPLATE.md');
-      expect(result.created).toContain('AGENT_RULES-snippet.md');
+      expect(result.created).toContain('docs/ADR_GUIDELINES.md');
       expect(result.created).toContain('docs/adr/README.md');
 
       // Verify files actually exist
@@ -38,7 +38,7 @@ describe('Workspace Initialization', () => {
       await mkdir(join(tempDir, 'docs', 'adr'), { recursive: true });
       await writeFile(join(tempDir, '.dependency-cruiser.js'), 'Custom config');
 
-      const result = await initWorkspace(tempDir);
+      const result = await initWorkspace(tempDir, { interactive: false });
 
       expect(result.skipped).toContain('.dependency-cruiser.js');
       
@@ -49,7 +49,7 @@ describe('Workspace Initialization', () => {
     });
 
     it('should create directories recursively', async () => {
-      await initWorkspace(tempDir);
+      await initWorkspace(tempDir, { interactive: false });
 
       expect(await pathExists(join(tempDir, 'docs', 'adr', 'templates'))).toBe(true);
       expect(await pathExists(join(tempDir, '.github'))).toBe(true);
@@ -59,14 +59,14 @@ describe('Workspace Initialization', () => {
       const emptyDir = join(tempDir, 'empty');
       await mkdir(emptyDir);
 
-      const result = await initWorkspace(emptyDir);
+      const result = await initWorkspace(emptyDir, { interactive: false });
 
       expect(result.created.length).toBeGreaterThan(0);
       expect(result.skipped.length).toBe(0);
     });
 
     it('should work with absolute paths', async () => {
-      const result = await initWorkspace(tempDir);
+      const result = await initWorkspace(tempDir, { interactive: false });
       expect(result.created.length).toBeGreaterThan(0);
     });
   });

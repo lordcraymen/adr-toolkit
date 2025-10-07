@@ -13,7 +13,7 @@ Feature: ADR Workspace Initialization
     And I should see "docs/adr/README.md" file
     And I should see ".dependency-cruiser.js" file
     And I should see ".github/PULL_REQUEST_TEMPLATE.md" file
-    And I should see "AGENT_RULES-snippet.md" file
+    And I should see "docs/ADR_GUIDELINES.md" file
     And the command should exit with code 0
 
   Scenario: Initialize workspace with existing files
