@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/lordcraymen/adr-toolkit/compare/v1.1.0...v1.2.0) (2025-10-07)
+
+
+### Features
+
+* add self-documenting ADR system with automated release decision ([cff5da8](https://github.com/lordcraymen/adr-toolkit/commit/cff5da8cdcdd186a587e48a5f7ca13dcb7d7764c))
+
 # [1.1.0](https://github.com/lordcraymen/adr-toolkit/compare/v1.0.0...v1.1.0) (2025-10-07)
 
 
