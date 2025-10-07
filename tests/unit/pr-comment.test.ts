@@ -105,6 +105,11 @@ summary: "Test summary"
     });
 
     it('should detect PR number from PR_NUMBER', async () => {
+      // Clear any existing environment variables
+      delete process.env.GITHUB_REF;
+      delete process.env.GITHUB_EVENT_NUMBER;
+      
+      // Set up test environment
       process.env.GITHUB_TOKEN = 'token';
       process.env.GITHUB_REPOSITORY = 'owner/repo';
       process.env.PR_NUMBER = '789';
@@ -124,11 +129,22 @@ summary: "Test summary"
         status: 200
       });
 
-      await runPrComment(tempDir);
+      const result = await runPrComment(tempDir);
 
+      // Verify the function succeeded
+      expect(result.posted).toBe(true);
+      
+      // Verify the correct API endpoint was called
       expect(mockFetch).toHaveBeenCalledWith(
         'https://api.github.com/repos/owner/repo/issues/789/comments',
-        expect.anything()
+        expect.objectContaining({
+          method: 'POST',
+          headers: expect.objectContaining({
+            Authorization: 'Bearer token',
+            'Content-Type': 'application/json'
+          }),
+          body: expect.stringContaining('ADR Digest')
+        })
       );
     });
 
