@@ -1,3 +1,16 @@
+# [3.0.0](https://github.com/lordcraymen/adr-toolkit/compare/v2.0.0...v3.0.0) (2025-10-07)
+
+
+### Features
+
+* add interactive options to handleAdrGuidelines and initWorkspace functions ([bd953d4](https://github.com/lordcraymen/adr-toolkit/commit/bd953d4f977515163be4e594a3b9681460848da9))
+* improve ADR guidelines implementation ([8884eea](https://github.com/lordcraymen/adr-toolkit/commit/8884eeaf32d58d4bfe07441e69838b92c8322b05))
+
+
+### BREAKING CHANGES
+
+* AGENT_RULES-snippet.md is no longer created in project root
+
 # [2.0.0](https://github.com/lordcraymen/adr-toolkit/compare/v1.3.0...v2.0.0) (2025-10-07)
 
 
