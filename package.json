@@ -21,7 +21,13 @@
     "build": "tsup",
     "lint": "eslint \"src/**/*.ts\"",
     "typecheck": "tsc --noEmit",
-    "test": "node --test test/basic.test.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:unit": "vitest run tests/unit/",
+    "test:integration": "vitest run tests/integration/", 
+    "test:e2e": "vitest run tests/e2e/",
+    "test:coverage": "vitest run --coverage",
+    "test:old": "node --test test/basic.test.mjs",
     "prepare": "npm run build"
   },
   "files": [
@@ -44,11 +50,14 @@
     "gray-matter": "^4.0.3"
   },
   "devDependencies": {
-    "@types/node": "^20.11.30",
+    "@cucumber/cucumber": "^12.2.0",
+    "@cucumber/gherkin": "^35.1.0",
+    "@types/node": "^20.19.19",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "eslint": "^8.57.0",
     "tsup": "^8.0.2",
-    "typescript": "5.3.3"
+    "typescript": "5.3.3",
+    "vitest": "^3.2.4"
   }
 }
