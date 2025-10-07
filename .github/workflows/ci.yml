@@ -52,17 +52,19 @@ jobs:
       - name: Check for relevant changes
         id: changes
         run: |
-          git fetch origin main:main
-          CHANGED=$(git diff --name-only main...HEAD -- src/ package.json dist/)
+          # Compare current commit with previous commit to detect relevant changes
+          CHANGED=$(git diff --name-only HEAD~1 HEAD -- src/ package.json dist/ tsconfig.json tsup.config.ts)
           echo "Changed files: $CHANGED"
           if [ -z "$CHANGED" ]; then
-            echo "skip_release=true" >> $GITHUB_ENV
+            echo "skip_release=true" >> "$GITHUB_OUTPUT"
+            echo "No relevant changes detected, skipping release."
           else
-            echo "skip_release=false" >> $GITHUB_ENV
+            echo "skip_release=false" >> "$GITHUB_OUTPUT"
+            echo "Relevant changes detected, proceeding with release."
           fi
 
       - name: Release
-        if: env.skip_release == 'false'
+        if: steps.changes.outputs.skip_release == 'false'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
