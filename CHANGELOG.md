@@ -1,3 +1,15 @@
+# [1.3.0](https://github.com/lordcraymen/adr-toolkit/compare/v1.2.0...v1.3.0) (2025-10-07)
+
+
+### Bug Fixes
+
+* correct formatting in ACTIVE.md for ADR-0002 entry ([390f210](https://github.com/lordcraymen/adr-toolkit/commit/390f210c772bb4c03b1275b2b222c1585593f9b5))
+
+
+### Features
+
+* establish English as primary language policy with ADR-0002 ([3b8c78b](https://github.com/lordcraymen/adr-toolkit/commit/3b8c78bf6a38544b06497d5ec0e5d7e6986d6492))
+
 # [1.2.0](https://github.com/lordcraymen/adr-toolkit/compare/v1.1.0...v1.2.0) (2025-10-07)
 
 
