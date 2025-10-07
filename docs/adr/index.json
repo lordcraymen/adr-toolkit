@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2025-10-07T10:54:39.192Z",
-  "total": 1,
+  "generatedAt": "2025-10-07T11:23:58.001Z",
+  "total": 2,
   "adrs": [
     {
       "id": "ADR-0001",
@@ -10,6 +10,15 @@
       "tags": [],
       "modules": [],
       "path": "docs/adr/ADR-0001-automated-npm-releases-with-semantic-release.md"
+    },
+    {
+      "id": "ADR-0002",
+      "title": "ADR-0002: English as Primary Language for Documentation and Comments",
+      "status": "",
+      "summary": "",
+      "tags": [],
+      "modules": [],
+      "path": "docs/adr/ADR-0002-english-as-primary-language-for-documentation-and-comments.md"
     }
   ]
 }
