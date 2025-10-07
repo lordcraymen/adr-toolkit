@@ -1,11 +1,13 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { mkdir, writeFile, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 
-// TODO: These imports will need to be updated when we implement the config system
-// import { loadConfig, validateAdrsWithConfig, createConfiguredDigest } from '../../src/config.js';
-// import { runCheckWithConfig } from '../../src/check.js';
+import { loadConfig, validateConfig, AdrConfig } from '../../src/config.js';
+import { validateAdrsWithConfig, createActiveMarkdownWithConfig, createDigestWithConfig } from '../../src/adr.js';
+import { runCheckWithConfig } from '../../src/check.js';
+import { runConfigInit, runConfigValidate, runConfigShow } from '../../src/config-cli.js';
+import { pathExists } from '../../src/fs-utils.js';
 
 describe('Configuration-Driven Status Management', () => {
   let tempDir: string;
@@ -21,13 +23,73 @@ describe('Configuration-Driven Status Management', () => {
   });
 
   describe('Configuration Loading', () => {
-    it.todo('should load default configuration when no config file exists');
+    it('should load default configuration when no config file exists', async () => {
+      // No config file in temp directory
+      const config = await loadConfig(tempDir);
+      
+      expect(config).toBeDefined();
+      expect(config.statuses).toBeDefined();
+      expect(config.statuses.accepted).toEqual({
+        active: true,
+        includeInDigest: true
+      });
+      expect(config.statuses.rejected).toEqual({
+        active: false,
+        includeInDigest: false
+      });
+      expect(config.validation?.summaryLimit).toBe(300);
+    });
     
-    it.todo('should load custom configuration from .adrx.config.json');
+    it('should load custom configuration from .adrx.config.json', async () => {
+      const customConfig = {
+        statuses: {
+          'draft': { active: true, includeInDigest: false },
+          'review': { active: true, includeInDigest: false },
+          'approved': { active: true, includeInDigest: true }
+        }
+      };
+
+      await writeFile(join(tempDir, '.adrx.config.json'), JSON.stringify(customConfig, null, 2));
+
+      const config = await loadConfig(tempDir);
+      
+      expect(config.statuses).toMatchObject(customConfig.statuses);
+      expect(config.statuses.draft).toEqual({ active: true, includeInDigest: false });
+      expect(config.statuses.review).toEqual({ active: true, includeInDigest: false });
+      expect(config.statuses.approved).toEqual({ active: true, includeInDigest: true });
+    });
     
-    it.todo('should validate configuration schema');
+    it('should validate configuration schema', () => {
+      const validConfig: AdrConfig = {
+        statuses: {
+          'valid-status': { active: true, includeInDigest: false }
+        }
+      };
+
+      expect(() => validateConfig(validConfig)).not.toThrow();
+
+      const invalidConfig = {
+        statuses: {
+          'invalid status with spaces': { active: 'not-boolean', includeInDigest: false }
+        }
+      } as unknown as AdrConfig;
+
+      expect(() => validateConfig(invalidConfig)).toThrow();
+    });
     
-    it.todo('should reject invalid configuration files');
+    it('should reject invalid configuration files', async () => {
+      const invalidConfig = `{
+        "statuses": {
+          "invalid-status-name": {
+            "active": "not-a-boolean"
+          }
+        }
+      }`;
+
+      await writeFile(join(tempDir, '.adrx.config.json'), invalidConfig);
+
+      await expect(loadConfig(tempDir)).rejects.toThrow();
+    });
     
     it.todo('should support hierarchical configuration lookup (project > workspace > global)');
 
@@ -35,7 +97,7 @@ describe('Configuration-Driven Status Management', () => {
   });
 
   describe('Custom Status Validation', () => {
-    it.todo('should validate ADRs against custom status definitions', async () => {
+    it('should validate ADRs against custom status definitions', async () => {
       // Test scenario:
       // - Custom config with statuses: draft, security-review, approved, implemented, archived
       // - ADRs with these custom statuses should validate successfully
@@ -70,9 +132,9 @@ summary: "This uses the old hard-coded status"
       await writeFile(join(tempDir, 'docs', 'adr', 'ADR-0001-valid.md'), validAdr);
       await writeFile(join(tempDir, 'docs', 'adr', 'ADR-0002-invalid.md'), invalidAdr);
 
-      // const result = await runCheckWithConfig(tempDir);
-      // expect(result.ok).toBe(false); // Should fail due to invalid status
-      // expect(result.errors.some(e => e.message.includes('rejected'))).toBe(true);
+      const result = await runCheckWithConfig(tempDir);
+      expect(result.ok).toBe(false); // Should fail due to invalid status
+      expect(result.errors?.some(e => e.includes('rejected'))).toBe(true);
     });
 
     it.todo('should support case-insensitive status matching');
@@ -174,7 +236,17 @@ summary: "This uses the old hard-coded status"
   });
 
   describe('Configuration CLI Commands', () => {
-    it.todo('should initialize default configuration with adrx config init');
+    it('should initialize default configuration with adrx config init', async () => {
+      // Mock console.log to capture output
+      const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      
+      await runConfigInit(tempDir);
+      
+      expect(await pathExists(join(tempDir, '.adrx.config.json'))).toBe(true);
+      expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('Created default configuration'));
+      
+      logSpy.mockRestore();
+    });
     
     it.todo('should validate configuration with adrx config validate');
     

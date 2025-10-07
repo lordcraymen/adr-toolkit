@@ -14,6 +14,7 @@ import {
 } from './constants.js';
 import { AdrDocument, AdrFrontmatter, ValidationError } from './types.js';
 import { ensureDir, writeFileSafe } from './fs-utils.js';
+import { AdrConfig, getValidStatuses, getActiveStatuses, getDigestStatuses } from './config.js';
 
 const ADR_IGNORE = ['**/templates/**', '**/README.md', '**/ACTIVE.md', '**/index.json', '**/ADR-0000-template.md'];
 
@@ -150,6 +151,53 @@ export function validateAdrs(adrs: AdrDocument[]): ValidationError[] {
   return errors;
 }
 
+/**
+ * Validate ADRs against configuration-driven rules
+ */
+export function validateAdrsWithConfig(adrs: AdrDocument[], config: AdrConfig): ValidationError[] {
+  const errors: ValidationError[] = [];
+  const validStatuses = getValidStatuses(config);
+  const summaryLimit = config.validation?.summaryLimit ?? SUMMARY_LIMIT;
+  const requiredFields = config.validation?.requiredFields ?? ['title', 'status', 'summary'];
+  
+  for (const doc of adrs) {
+    // Validate required fields
+    for (const field of requiredFields) {
+      if (field === 'title' && !doc.title) {
+        errors.push({ file: doc.relativePath, message: 'Missing title in frontmatter or heading.' });
+      } else if (field === 'status' && !doc.status) {
+        errors.push({ file: doc.relativePath, message: 'Missing status in frontmatter.' });
+      } else if (field === 'summary' && !doc.summary) {
+        errors.push({ file: doc.relativePath, message: 'Missing summary in frontmatter.' });
+      }
+      // Add support for custom required fields
+      // Note: This requires extending AdrDocument to support custom fields
+    }
+    
+    // Validate status against configuration
+    if (doc.status) {
+      const normalizedStatus = doc.status.toLowerCase();
+      if (!validStatuses.has(normalizedStatus)) {
+        const availableStatuses = Array.from(validStatuses).join(', ');
+        errors.push({ 
+          file: doc.relativePath, 
+          message: `Unknown status "${doc.status}". Available statuses: ${availableStatuses}.` 
+        });
+      }
+    }
+    
+    // Validate summary length
+    if (doc.summary && doc.summary.length > summaryLimit) {
+      errors.push({
+        file: doc.relativePath,
+        message: `Summary too long (${doc.summary.length} > ${summaryLimit}).`
+      });
+    }
+  }
+  
+  return errors;
+}
+
 export function createIndex(adrs: AdrDocument[], generatedAt: string): AdrIndex {
   return {
     generatedAt,
@@ -190,6 +238,37 @@ export function createDigest(adrs: AdrDocument[], generatedAt: string): AdrDiges
   };
 }
 
+/**
+ * Create ACTIVE.md using configuration-driven active status rules
+ */
+export function createActiveMarkdownWithConfig(adrs: AdrDocument[], generatedAt: string, config: AdrConfig): string {
+  const activeStatuses = getActiveStatuses(config);
+  const activeAdrs = adrs.filter((adr) => activeStatuses.has(adr.status.toLowerCase()));
+  const tableRows = activeAdrs
+    .map((adr) => `| ${adr.id} | ${adr.title} | ${adr.status} | ${escapePipes(adr.summary)} |`)
+    .join('\n');
+  const header = `# Active Architecture Decisions\n\nGenerated at ${generatedAt}\n\n| ID | Title | Status | Summary |\n| --- | --- | --- | --- |`;
+  return `${header}${tableRows ? `\n${tableRows}` : ''}\n`;
+}
+
+/**
+ * Create digest using configuration-driven digest inclusion rules
+ */
+export function createDigestWithConfig(adrs: AdrDocument[], generatedAt: string, config: AdrConfig): AdrDigest {
+  const digestStatuses = getDigestStatuses(config);
+  const digestAdrs = adrs.filter((adr) => digestStatuses.has(adr.status.toLowerCase()));
+  return {
+    generatedAt,
+    count: digestAdrs.length,
+    adrs: digestAdrs.map((adr) => ({
+      id: adr.id,
+      title: adr.title,
+      summary: adr.summary,
+      path: adr.relativePath
+    }))
+  };
+}
+
 export async function buildArtifacts(adrs: AdrDocument[], cwd: string = process.cwd()): Promise<void> {
   await ensureDir(path.join(cwd, ADR_DIRECTORY));
   await ensureDir(path.join(cwd, 'dist'));
@@ -202,6 +281,24 @@ export async function buildArtifacts(adrs: AdrDocument[], cwd: string = process.
   await writeFileSafe(path.join(cwd, ACTIVE_PATH), activeContent);
 
   const digestPayload = createDigest(adrs, generatedAt);
+  await writeFileSafe(path.join(cwd, DIGEST_PATH), `${JSON.stringify(digestPayload, null, 2)}\n`);
+}
+
+/**
+ * Build artifacts using configuration-driven rules
+ */
+export async function buildArtifactsWithConfig(adrs: AdrDocument[], config: AdrConfig, cwd: string = process.cwd()): Promise<void> {
+  await ensureDir(path.join(cwd, ADR_DIRECTORY));
+  await ensureDir(path.join(cwd, 'dist'));
+  const generatedAt = new Date().toISOString();
+
+  const indexPayload = createIndex(adrs, generatedAt);
+  await writeFileSafe(path.join(cwd, INDEX_PATH), `${JSON.stringify(indexPayload, null, 2)}\n`);
+
+  const activeContent = createActiveMarkdownWithConfig(adrs, generatedAt, config);
+  await writeFileSafe(path.join(cwd, ACTIVE_PATH), activeContent);
+
+  const digestPayload = createDigestWithConfig(adrs, generatedAt, config);
   await writeFileSafe(path.join(cwd, DIGEST_PATH), `${JSON.stringify(digestPayload, null, 2)}\n`);
 }
 

@@ -63,6 +63,35 @@ program
     await runPrComment();
   });
 
+// Configuration management commands
+const configCmd = program
+  .command('config')
+  .description('Manage ADR configuration');
+
+configCmd
+  .command('init')
+  .description('Initialize default .adrx.config.json configuration file')
+  .action(async () => {
+    const { runConfigInit } = await import('./config-cli.js');
+    await runConfigInit();
+  });
+
+configCmd
+  .command('validate')
+  .description('Validate current configuration file')
+  .action(async () => {
+    const { runConfigValidate } = await import('./config-cli.js');
+    await runConfigValidate();
+  });
+
+configCmd
+  .command('show')
+  .description('Display current configuration')
+  .action(async () => {
+    const { runConfigShow } = await import('./config-cli.js');
+    await runConfigShow();
+  });
+
 program.parseAsync(process.argv).catch((error: unknown) => {
   console.error(error);
   process.exitCode = 1;
