@@ -14,7 +14,8 @@ const FILES_TO_COPY: Array<{ source: string; target: string }> = [
   { source: `adr/${ADR_TEMPLATE_NAME}`, target: path.join(ADR_DIRECTORY, 'templates', ADR_TEMPLATE_NAME) },
   { source: '.dependency-cruiser.js', target: '.dependency-cruiser.js' },
   { source: 'PULL_REQUEST_TEMPLATE.md', target: '.github/PULL_REQUEST_TEMPLATE.md' },
-  { source: 'AGENT_RULES-snippet.md', target: 'AGENT_RULES-snippet.md' }
+  { source: 'AGENT_RULES-snippet.md', target: 'AGENT_RULES-snippet.md' },
+  { source: 'adrx.config.json', target: '.adrx.config.json' }
 ];
 
 export async function initWorkspace(cwd: string = process.cwd()): Promise<InitResult> {
