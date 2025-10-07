@@ -1,3 +1,24 @@
+# [2.0.0](https://github.com/lordcraymen/adr-toolkit/compare/v1.3.0...v2.0.0) (2025-10-07)
+
+
+### Bug Fixes
+
+* add missing trailing newlines to all feature files ([aee93f4](https://github.com/lordcraymen/adr-toolkit/commit/aee93f41f923090f2bf87c691994a5b43d982294))
+* correct release check logic to compare with previous commit ([5488311](https://github.com/lordcraymen/adr-toolkit/commit/548831161b167322f61f97f435692b05d892bbcb))
+* update language in guidelines and testing documentation to English ([ab9e871](https://github.com/lordcraymen/adr-toolkit/commit/ab9e871b8f74fdb0d511944bc22ba102da09ba45))
+
+
+### Features
+
+* Add ADR-0003 for configurable status management ([5409941](https://github.com/lordcraymen/adr-toolkit/commit/5409941f6715d3997bfc673afacef2a696fa176a)), closes [#9](https://github.com/lordcraymen/adr-toolkit/issues/9)
+* Add configuration infrastructure for adrx init ([1c27063](https://github.com/lordcraymen/adr-toolkit/commit/1c27063bca85f56e31ebee3a5eec30fd2c50ff70))
+* implement configurable status management system ([ed63d53](https://github.com/lordcraymen/adr-toolkit/commit/ed63d5321cd9834a36be906472254ac5317ed5f0)), closes [#9](https://github.com/lordcraymen/adr-toolkit/issues/9)
+
+
+### BREAKING CHANGES
+
+* Custom status configurations now completely replace default statuses instead of merging with them
+
 # [1.3.0](https://github.com/lordcraymen/adr-toolkit/compare/v1.2.0...v1.3.0) (2025-10-07)
 
 
