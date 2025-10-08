@@ -1,3 +1,17 @@
+# [3.1.0](https://github.com/lordcraymen/adr-toolkit/compare/v3.0.0...v3.1.0) (2025-10-08)
+
+
+### Bug Fixes
+
+* update generated timestamp in ACTIVE.md and index.json ([33b093a](https://github.com/lordcraymen/adr-toolkit/commit/33b093a1d01947ab85932249a4dc587e5c177835))
+* update package version from 1.3.0 to 3.0.0 in package-lock.json ([9a84440](https://github.com/lordcraymen/adr-toolkit/commit/9a84440b0583e1989398fadd98ba3b4fe2f319c8))
+* update status of ADR-0003 to Accepted ([b3f3b15](https://github.com/lordcraymen/adr-toolkit/commit/b3f3b15ce7aaf5f9ce89bbf578eaf63a660ea097))
+
+
+### Features
+
+* improved husky integration to avoid commit loops ([81e3004](https://github.com/lordcraymen/adr-toolkit/commit/81e300436f15960601986993267ffc3fa087deff))
+
 # [3.0.0](https://github.com/lordcraymen/adr-toolkit/compare/v2.0.0...v3.0.0) (2025-10-07)
 
 
