@@ -93,6 +93,16 @@ Each helper accepts an optional working directory argument so you can run the to
 
 A reusable GitHub Actions workflow lives at `.github/workflows/ci.yml`. It runs on Node.js 18, 20, and 22 using `npm ci` followed by `lint`, `typecheck`, `test`, and `build`.
 
+## Acknowledgments
+
+This tool supports the Architectural Decision Records pattern 
+as described by Michael Nygard in his influential blog post:
+"Documenting Architecture Decisions"
+
+For more information about ADRs and related tooling, see:
+- [ADR GitHub Organization](https://adr.github.io/)
+- [Architecture Decision Records](https://adr.github.io/)
+
 ## License
 
 MIT © Florian "lordcraymen" Patzke
