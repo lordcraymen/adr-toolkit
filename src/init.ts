@@ -11,13 +11,15 @@ export interface InitResult {
   skipped: string[];
 }
 
-async function handleAdrGuidelines(cwd: string, options: { interactive?: boolean } = {}): Promise<{ created: boolean; skipped: boolean }> {
+async function handleAdrGuidelines(cwd: string, options: { interactive?: boolean; dryRun?: boolean } = {}): Promise<{ created: boolean; skipped: boolean }> {
   const templateSource = path.join(templateRoot, 'ADR_GUIDELINES.md');
   const targetPath = path.join(cwd, 'docs', 'ADR_GUIDELINES.md');
   
   if (!(await pathExists(targetPath))) {
     // File doesn't exist, create it
-    await copyFileIfMissing(templateSource, targetPath);
+    if (!options.dryRun) {
+      await copyFileIfMissing(templateSource, targetPath);
+    }
     return { created: true, skipped: false };
   }
   
@@ -28,8 +30,8 @@ async function handleAdrGuidelines(cwd: string, options: { interactive?: boolean
   }
   
   // File exists and has been modified
-  if (options.interactive === false) {
-    // Non-interactive mode (tests): don't overwrite, just skip
+  if (options.interactive === false || options.dryRun) {
+    // Non-interactive mode (tests) or dry-run mode: don't overwrite, just skip
     return { created: false, skipped: true };
   }
   
@@ -40,11 +42,13 @@ async function handleAdrGuidelines(cwd: string, options: { interactive?: boolean
   );
   
   if (shouldOverwrite) {
-    await copyFileIfMissing(templateSource, targetPath); // This won't copy since file exists
-    // We need to actually overwrite
-    await ensureDir(path.dirname(targetPath));
-    const { copyFile } = await import('node:fs/promises');
-    await copyFile(templateSource, targetPath);
+    if (!options.dryRun) {
+      await copyFileIfMissing(templateSource, targetPath); // This won't copy since file exists
+      // We need to actually overwrite
+      await ensureDir(path.dirname(targetPath));
+      const { copyFile } = await import('node:fs/promises');
+      await copyFile(templateSource, targetPath);
+    }
     return { created: true, skipped: false };
   }
   
@@ -58,30 +62,46 @@ const FILES_TO_COPY: Array<{ source: string; target: string }> = [
   { source: 'adrx.config.json', target: '.adrx.config.json' }
 ];
 
-export async function initWorkspace(cwd: string = process.cwd(), options: { interactive?: boolean } = {}): Promise<InitResult> {
+export async function initWorkspace(cwd: string = process.cwd(), options: { interactive?: boolean; dryRun?: boolean } = {}): Promise<InitResult> {
   const created: string[] = [];
   const skipped: string[] = [];
 
-  await ensureDir(path.join(cwd, ADR_DIRECTORY));
-  await ensureDir(path.join(cwd, ADR_DIRECTORY, 'templates'));
-  await ensureDir(path.join(cwd, '.github'));
-  await ensureDir(path.join(cwd, 'docs'));
+  // In dry-run mode, don't create directories
+  if (!options.dryRun) {
+    await ensureDir(path.join(cwd, ADR_DIRECTORY));
+    await ensureDir(path.join(cwd, ADR_DIRECTORY, 'templates'));
+    await ensureDir(path.join(cwd, '.github'));
+    await ensureDir(path.join(cwd, 'docs'));
+  }
 
   for (const item of FILES_TO_COPY) {
     const source = path.join(templateRoot, item.source);
     const target = path.join(cwd, item.target);
-    const wasCreated = await copyFileIfMissing(source, target);
-    if (wasCreated) {
-      created.push(item.target.replace(/\\/g, '/'));
+    
+    if (options.dryRun) {
+      // In dry-run mode, check if file would be created
+      const exists = await pathExists(target);
+      if (!exists) {
+        created.push(item.target.replace(/\\/g, '/'));
+      } else {
+        skipped.push(item.target.replace(/\\/g, '/'));
+      }
     } else {
-      skipped.push(item.target.replace(/\\/g, '/'));
+      const wasCreated = await copyFileIfMissing(source, target);
+      if (wasCreated) {
+        created.push(item.target.replace(/\\/g, '/'));
+      } else {
+        skipped.push(item.target.replace(/\\/g, '/'));
+      }
     }
   }
 
   // Handle ADR README
   const adrIndexPath = path.join(cwd, ADR_DIRECTORY, 'README.md');
   if (!(await pathExists(adrIndexPath))) {
-    await copyFileIfMissing(path.join(templateRoot, 'adr', 'README.seed.md'), adrIndexPath);
+    if (!options.dryRun) {
+      await copyFileIfMissing(path.join(templateRoot, 'adr', 'README.seed.md'), adrIndexPath);
+    }
     created.push(path.relative(cwd, adrIndexPath).replace(/\\/g, '/'));
   } else {
     skipped.push(path.relative(cwd, adrIndexPath).replace(/\\/g, '/'));

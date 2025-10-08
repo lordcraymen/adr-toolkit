@@ -21,29 +21,50 @@ program
 program
   .command('init')
   .description('Create ADR directories and supporting templates')
-  .action(async () => {
-    const { created, skipped } = await initWorkspace();
-    if (created.length > 0) {
-      console.log(`Created: ${created.join(', ')}`);
-    }
-    if (skipped.length > 0) {
-      console.log(`Skipped existing: ${skipped.join(', ')}`);
+  .option('--dry-run', 'Show what files would be created without creating them')
+  .action(async (options: { dryRun?: boolean }) => {
+    const { created, skipped } = await initWorkspace(process.cwd(), { dryRun: options.dryRun });
+    if (options.dryRun) {
+      console.log('Files that would be created:');
+      if (created.length > 0) {
+        console.log(`  ${created.join('\n  ')}`);
+      } else {
+        console.log('  (none - all files already exist)');
+      }
+      if (skipped.length > 0) {
+        console.log('\nFiles that would be skipped (already exist):');
+        console.log(`  ${skipped.join('\n  ')}`);
+      }
+    } else {
+      if (created.length > 0) {
+        console.log(`Created: ${created.join(', ')}`);
+      }
+      if (skipped.length > 0) {
+        console.log(`Skipped existing: ${skipped.join(', ')}`);
+      }
     }
   });
 
 program
   .command('build')
   .description('Generate ADR indexes and digest files')
-  .action(async () => {
-    await runBuild();
+  .option('-f, --format <format>', 'Output format (json|text)', 'text')
+  .action(async (options: { format: string }) => {
+    const format = options.format === 'json' ? 'json' : 'text';
+    const result = await runBuild(process.cwd(), format);
+    if (!result.ok) {
+      process.exitCode = 1;
+    }
   });
 
 program
   .command('check')
   .description('Validate ADR frontmatter and summary constraints')
-  .action(async () => {
-    const { ok } = await runCheck();
-    if (!ok) {
+  .option('-f, --format <format>', 'Output format (json|text)', 'text')
+  .action(async (options: { format: string }) => {
+    const format = options.format === 'json' ? 'json' : 'text';
+    const result = await runCheck(process.cwd(), format);
+    if (!result.ok) {
       process.exitCode = 1;
     }
   });
@@ -52,9 +73,10 @@ program
   .command('affected')
   .description('List ADRs affected by changes compared to a base git ref')
   .requiredOption('-b, --base <ref>', 'Base git reference')
-  .action(async (options: { base: string }) => {
-    const result = await runAffected(options.base);
-    console.log(JSON.stringify(result, null, 2));
+  .option('-f, --format <format>', 'Output format (json|text)', 'json')
+  .action(async (options: { base: string; format: string }) => {
+    const format = options.format === 'text' ? 'text' : 'json';
+    await runAffected(options.base, process.cwd(), format);
   });
 
 program

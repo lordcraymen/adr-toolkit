@@ -1,3 +1,22 @@
+# [3.3.0](https://github.com/lordcraymen/adr-toolkit/compare/v3.2.0...v3.3.0) (2025-10-08)
+
+
+### Features
+
+* add structured output modes for agent integration (resolves [#16](https://github.com/lordcraymen/adr-toolkit/issues/16)) ([2f678cd](https://github.com/lordcraymen/adr-toolkit/commit/2f678cd52bab8e5f33496ba7ecfbb5083d0740fa))
+
+# [3.2.0](https://github.com/lordcraymen/adr-toolkit/compare/v3.1.2...v3.2.0) (2025-10-08)
+
+
+### Bug Fixes
+
+* update package versions to 3.1.2 in package.json and package-lock.json ([2f01824](https://github.com/lordcraymen/adr-toolkit/commit/2f01824ec4da89c35b1859cc597c9611361326d8))
+
+
+### Features
+
+* add --dry-run option for adrx init command ([4b8da8a](https://github.com/lordcraymen/adr-toolkit/commit/4b8da8a4252431f6303c50e451966473eaff8d38)), closes [#17](https://github.com/lordcraymen/adr-toolkit/issues/17)
+
 ## [3.1.2](https://github.com/lordcraymen/adr-toolkit/compare/v3.1.1...v3.1.2) (2025-10-08)
 
 

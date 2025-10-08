@@ -26,3 +26,24 @@ export interface ValidationError {
   file: string;
   message: string;
 }
+
+// Output format types for structured CLI responses
+export type OutputFormat = 'json' | 'text';
+
+export interface CheckResult {
+  ok: boolean;
+  adrCount: number;
+  errors?: ValidationError[];
+}
+
+export interface BuildResult {
+  ok: boolean;
+  adrCount: number;
+  artifactsGenerated: string[];
+  error?: string;
+}
+
+export interface AffectedResult {
+  changed: string[];
+  affected: string[];
+}
