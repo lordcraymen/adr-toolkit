@@ -16,7 +16,7 @@ summary: >-
 
 ## Status
 
-Proposed
+Accepted
 
 ## Context
 
