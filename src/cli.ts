@@ -7,6 +7,7 @@ import { runBuild } from './build.js';
 import { runCheck } from './check.js';
 import { runAffected } from './affected.js';
 import { runPrComment } from './pr-comment.js';
+import { createAdr, parseCliInput, parseJsonInput } from './create.js';
 
 const require = createRequire(import.meta.url);
 const pkg = require('../package.json') as { version?: string; description?: string };
@@ -83,6 +84,81 @@ program
   .description('Post the ADR digest as a pull request comment (no-op without GitHub context)')
   .action(async () => {
     await runPrComment();
+  });
+
+program
+  .command('create')
+  .description('Create a new ADR from structured input')
+  .option('-t, --title <title>', 'ADR title (required)')
+  .option('-s, --summary <summary>', 'ADR summary (required)')
+  .option('--status <status>', 'ADR status (default: Proposed)')
+  .option('--tags <tags>', 'Comma-separated list of tags')
+  .option('--modules <modules>', 'Comma-separated list of modules')
+  .option('-d, --date <date>', 'ADR date (default: today)')
+  .option('--context <context>', 'Context section content')
+  .option('--decision <decision>', 'Decision section content')
+  .option('--consequences <consequences>', 'Consequences section content')
+  .option('--references <references>', 'References section content')
+  .option('--json <json>', 'JSON input string (overrides other options)')
+  .option('--json-stdin', 'Read JSON input from stdin')
+  .action(async (options: {
+    title?: string;
+    summary?: string;
+    status?: string;
+    tags?: string;
+    modules?: string;
+    date?: string;
+    context?: string;
+    decision?: string;
+    consequences?: string;
+    references?: string;
+    json?: string;
+    jsonStdin?: boolean;
+  }) => {
+    try {
+      let input;
+
+      if (options.jsonStdin) {
+        // Read from stdin
+        const { stdin } = process;
+        let jsonData = '';
+        
+        stdin.setEncoding('utf8');
+        for await (const chunk of stdin) {
+          jsonData += chunk;
+        }
+        
+        if (!jsonData.trim()) {
+          console.error('Error: No JSON input provided via stdin');
+          process.exitCode = 1;
+          return;
+        }
+        
+        input = parseJsonInput(jsonData);
+      } else if (options.json) {
+        // Parse JSON from command line option
+        input = parseJsonInput(options.json);
+      } else {
+        // Use CLI options
+        input = parseCliInput(options);
+      }
+
+      // Validate required fields
+      if (!input.title || !input.summary) {
+        console.error('Error: Both title and summary are required');
+        console.error('Usage: adrx create --title "..." --summary "..."');
+        console.error('   or: adrx create --json \'{"title": "...", "summary": "..."}\'');
+        process.exitCode = 1;
+        return;
+      }
+
+      const result = await createAdr(input);
+      console.log(`Created ADR: ${result.id}`);
+      console.log(`File: ${result.path}`);
+    } catch (error: unknown) {
+      console.error(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      process.exitCode = 1;
+    }
   });
 
 // Configuration management commands

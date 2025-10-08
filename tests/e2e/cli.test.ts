@@ -404,6 +404,126 @@ Create a comprehensive E2E test.
     });
   });
 
+  describe('adrx create', () => {
+    beforeEach(async () => {
+      await runCli(['init'], tempDir);
+    });
+
+    it('should create ADR with CLI options', async () => {
+      const result = await runCli([
+        'create',
+        '--title', 'Test Decision from CLI',
+        '--summary', 'This ADR was created using CLI options'
+      ], tempDir);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('Created ADR: ADR-0001');
+      expect(result.stdout).toMatch(/File: docs[\\/]adr[\\/]ADR-0001-test-decision-from-cli\.md/);
+
+      // Verify file exists and has correct content
+      const adrPath = join(tempDir, 'docs', 'adr', 'ADR-0001-test-decision-from-cli.md');
+      expect(await pathExists(adrPath)).toBe(true);
+    });
+
+    it('should create ADR with all optional CLI options', async () => {
+      const result = await runCli([
+        'create',
+        '--title', 'Complex Decision',
+        '--summary', 'A complex decision with all options',
+        '--status', 'Draft',
+        '--tags', 'architecture,performance',
+        '--modules', 'src/api,src/db',
+        '--date', '2024-01-01'
+      ], tempDir);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('Created ADR: ADR-0001');
+    });
+
+    it('should create ADR from JSON input', async () => {
+      const json = JSON.stringify({
+        title: 'JSON Decision',
+        summary: 'This decision was created from JSON input',
+        status: 'Accepted',
+        tags: ['json', 'test'],
+        modules: ['src/']
+      });
+
+      const result = await runCli([
+        'create',
+        '--json', json
+      ], tempDir);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('Created ADR: ADR-0001');
+    });
+
+    it('should fail with missing required fields', async () => {
+      const result = await runCli([
+        'create',
+        '--title', 'Missing Summary'
+      ], tempDir);
+
+      expect(result.exitCode).toBe(1);
+      expect(result.stderr).toContain('Both title and summary are required');
+    });
+
+    it('should fail with invalid JSON', async () => {
+      const result = await runCli([
+        'create',
+        '--json', '{"invalid": json'
+      ], tempDir);
+
+      expect(result.exitCode).toBe(1);
+      expect(result.stderr).toContain('Invalid JSON input');
+    });
+
+    it('should generate sequential IDs', async () => {
+      // Create first ADR
+      const result1 = await runCli([
+        'create',
+        '--title', 'First Decision',
+        '--summary', 'First summary'
+      ], tempDir);
+      expect(result1.exitCode).toBe(0);
+      expect(result1.stdout).toContain('Created ADR: ADR-0001');
+
+      // Create second ADR
+      const result2 = await runCli([
+        'create',
+        '--title', 'Second Decision',
+        '--summary', 'Second summary'
+      ], tempDir);
+      expect(result2.exitCode).toBe(0);
+      expect(result2.stdout).toContain('Created ADR: ADR-0002');
+    });
+
+    it('should integrate with other commands', async () => {
+      // Create ADR
+      const createResult = await runCli([
+        'create',
+        '--title', 'Integration Test Decision',
+        '--summary', 'This tests integration with other commands',
+        '--status', 'Accepted'
+      ], tempDir);
+      expect(createResult.exitCode).toBe(0);
+
+      // Check validation passes
+      const checkResult = await runCli(['check'], tempDir);
+      expect(checkResult.exitCode).toBe(0);
+      expect(checkResult.stdout).toContain('All 1 ADRs look good');
+
+      // Build artifacts
+      const buildResult = await runCli(['build'], tempDir);
+      expect(buildResult.exitCode).toBe(0);
+      expect(buildResult.stdout).toContain('Generated ADR artifacts for 1 decisions');
+
+      // Verify ADR appears in digest
+      const digestPath = join(tempDir, 'dist', 'adr-digest.json');
+      expect(await pathExists(digestPath)).toBe(true);
+    });
+  });
+
   describe('Format Option Tests', () => {
     beforeEach(async () => {
       await mkdir(join(tempDir, 'docs', 'adr'), { recursive: true });

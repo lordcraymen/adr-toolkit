@@ -48,6 +48,30 @@ Diffs the working tree against a git reference and reports ADRs affected by the 
 - A changed file matches one of the ADR `modules` entries (prefix match).
 - A changed path contains one of the ADR `tags` strings.
 
+### `adrx create`
+
+Create new ADRs programmatically from structured input:
+
+**CLI Options:**
+```bash
+# Create with individual options
+adrx create --title "Use TypeScript" --summary "We will use TypeScript for better type safety" --status "proposed"
+
+# Include tags and modules
+adrx create --title "Adopt GraphQL" --summary "GraphQL provides better API flexibility" --tags "api,graphql" --modules "src/api/"
+
+# Create from JSON input
+adrx create --json '{"title": "Use React", "summary": "React for frontend", "status": "accepted", "tags": ["frontend", "ui"]}'
+
+# Read JSON from stdin
+echo '{"title": "Migration Plan", "summary": "Database migration strategy"}' | adrx create --json-stdin
+```
+
+**Required fields:** `title` and `summary`  
+**Optional fields:** `status` (default: "Proposed"), `tags`, `modules`, `date`, custom content for Context, Decision, Consequences, and References sections.
+
+This command enables coding agents and automation tools to create ADRs without manual markdown formatting, addressing the structured interface need mentioned in issue #34.
+
 ### `adrx pr-comment`
 
 Posts the accepted ADR digest as a pull request comment when `GITHUB_TOKEN`, `GITHUB_REPOSITORY`, and PR metadata are available (e.g., within GitHub Actions). Without the necessary secrets, it logs a short message and exits without failing the build.
@@ -83,6 +107,7 @@ The toolkit also exposes programmatic helpers:
 
 - `loadAdrs()` – parse ADR Markdown into structured objects.
 - `validateAdrs()` and `validateAdrsWithConfig()` – return an array of validation errors, with optional custom configuration.
+- `createAdr()` – programmatically create new ADRs from structured input.
 - `createDigest()`, `createDigestWithConfig()` and `buildArtifacts()`, `buildArtifactsWithConfig()` – generate JSON/Markdown digests for custom pipelines, with optional configuration support.
 - `runAffected()`, `runCheck()`, `runBuild()`, `runBuildWithConfig()`, `runPrComment()` – the same routines invoked by the CLI.
 - Configuration helpers: `loadConfig()`, `validateConfig()` – load and validate `.adrx.config.json` files.
