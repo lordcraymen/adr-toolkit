@@ -1,13 +1,9 @@
 import { loadAdrs } from './adr.js';
 import { ADR_DIRECTORY } from './constants.js';
 import { gitDiffNames } from './git.js';
+import type { OutputFormat, AffectedResult } from './types.js';
 
-export interface AffectedResult {
-  changed: string[];
-  affected: string[];
-}
-
-export async function runAffected(baseRef: string, cwd: string = process.cwd()): Promise<AffectedResult> {
+export async function runAffected(baseRef: string, cwd: string = process.cwd(), format: OutputFormat = 'json'): Promise<AffectedResult> {
   if (!baseRef) {
     throw new Error('Missing --base <ref> option.');
   }
@@ -34,7 +30,22 @@ export async function runAffected(baseRef: string, cwd: string = process.cwd()):
     }
   }
 
-  return { changed: normalisedDiff, affected: Array.from(affected).sort() };
+  const result: AffectedResult = { changed: normalisedDiff, affected: Array.from(affected).sort() };
+
+  if (format === 'json') {
+    console.log(JSON.stringify(result, null, 2));
+  } else {
+    console.log(`Changed files: ${result.changed.length}`);
+    for (const file of result.changed) {
+      console.log(`  - ${file}`);
+    }
+    console.log(`Affected ADRs: ${result.affected.length}`);
+    for (const adr of result.affected) {
+      console.log(`  - ${adr}`);
+    }
+  }
+
+  return result;
 }
 
 function isPathMatch(file: string, moduleName: string): boolean {

@@ -403,4 +403,188 @@ Create a comprehensive E2E test.
       expect(affectedOutput).toHaveProperty('affected');
     });
   });
+
+  describe('Format Option Tests', () => {
+    beforeEach(async () => {
+      await mkdir(join(tempDir, 'docs', 'adr'), { recursive: true });
+    });
+
+    it('should support --format json flag for check command', async () => {
+      const adr = `---
+title: "Test Decision"
+status: "Accepted"
+summary: "Test summary for format validation"
+---
+# Test Decision`;
+
+      await writeFile(join(tempDir, 'docs', 'adr', 'ADR-0001-test.md'), adr);
+
+      const result = await runCli(['check', '--format', 'json'], tempDir);
+      
+      expect(result.exitCode).toBe(0);
+      
+      // Should be valid JSON
+      const jsonOutput = JSON.parse(result.stdout);
+      expect(jsonOutput).toMatchObject({
+        ok: true,
+        adrCount: 1
+      });
+      expect(jsonOutput.errors).toBeUndefined();
+    });
+
+    it('should support --format text flag for check command (default behavior)', async () => {
+      const adr = `---
+title: "Test Decision"
+status: "Accepted"
+summary: "Test summary for format validation"
+---
+# Test Decision`;
+
+      await writeFile(join(tempDir, 'docs', 'adr', 'ADR-0001-test.md'), adr);
+
+      const result = await runCli(['check', '--format', 'text'], tempDir);
+      
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('✓ All 1 ADRs look good.');
+      
+      // Should NOT be valid JSON
+      expect(() => JSON.parse(result.stdout)).toThrow();
+    });
+
+    it('should support --format json flag for build command', async () => {
+      const adr = `---
+title: "Test Decision"
+status: "Accepted"
+summary: "Test summary for format validation"
+---
+# Test Decision`;
+
+      await writeFile(join(tempDir, 'docs', 'adr', 'ADR-0001-test.md'), adr);
+
+      const result = await runCli(['build', '--format', 'json'], tempDir);
+      
+      expect(result.exitCode).toBe(0);
+      
+      // Should be valid JSON
+      const jsonOutput = JSON.parse(result.stdout);
+      expect(jsonOutput).toMatchObject({
+        ok: true,
+        adrCount: 1,
+        artifactsGenerated: [
+          'docs/adr/index.json',
+          'docs/adr/ACTIVE.md',
+          'dist/adr-digest.json'
+        ]
+      });
+      expect(jsonOutput.error).toBeUndefined();
+    });
+
+    it('should support --format text flag for build command (default behavior)', async () => {
+      const adr = `---
+title: "Test Decision"
+status: "Accepted"
+summary: "Test summary for format validation"
+---
+# Test Decision`;
+
+      await writeFile(join(tempDir, 'docs', 'adr', 'ADR-0001-test.md'), adr);
+
+      const result = await runCli(['build', '--format', 'text'], tempDir);
+      
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('Generated ADR artifacts for 1 decisions.');
+      
+      // Should NOT be valid JSON
+      expect(() => JSON.parse(result.stdout)).toThrow();
+    });
+
+    it('should support --format text flag for affected command', async () => {
+      const adr = `---
+title: "Test Decision"
+status: "Accepted"
+summary: "Test summary for format validation"
+---
+# Test Decision`;
+
+      await writeFile(join(tempDir, 'docs', 'adr', 'ADR-0001-test.md'), adr);
+
+      const result = await runCli(['affected', '--base', 'HEAD', '--format', 'text'], tempDir);
+      
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('Changed files:');
+      expect(result.stdout).toContain('Affected ADRs:');
+      
+      // Should NOT be valid JSON for the first line
+      const firstLine = result.stdout.split('\n')[0];
+      expect(() => JSON.parse(firstLine)).toThrow();
+    });
+
+    it('should support --format json flag for affected command (default behavior)', async () => {
+      const adr = `---
+title: "Test Decision"
+status: "Accepted"
+summary: "Test summary for format validation"
+---
+# Test Decision`;
+
+      await writeFile(join(tempDir, 'docs', 'adr', 'ADR-0001-test.md'), adr);
+
+      const result = await runCli(['affected', '--base', 'HEAD', '--format', 'json'], tempDir);
+      
+      expect(result.exitCode).toBe(0);
+      
+      // Should be valid JSON
+      const jsonOutput = JSON.parse(result.stdout);
+      expect(jsonOutput).toHaveProperty('changed');
+      expect(jsonOutput).toHaveProperty('affected');
+    });
+
+    it('should return structured JSON error output for invalid ADRs', async () => {
+      const invalidAdr = `---
+title: ""
+status: "InvalidStatus"
+summary: ""
+---
+# Invalid ADR`;
+
+      await writeFile(join(tempDir, 'docs', 'adr', 'ADR-0001-invalid.md'), invalidAdr);
+
+      const result = await runCli(['check', '--format', 'json'], tempDir);
+      
+      expect(result.exitCode).toBe(1);
+      
+      // Should be valid JSON even for errors
+      const jsonOutput = JSON.parse(result.stdout);
+      expect(jsonOutput).toMatchObject({
+        ok: false,
+        adrCount: 1
+      });
+      expect(jsonOutput.errors).toBeDefined();
+      expect(jsonOutput.errors.length).toBeGreaterThan(0);
+    });
+
+    it('should handle unknown format gracefully (default to text/json)', async () => {
+      const adr = `---
+title: "Test Decision"
+status: "Accepted"
+summary: "Test summary for format validation"
+---
+# Test Decision`;
+
+      await writeFile(join(tempDir, 'docs', 'adr', 'ADR-0001-test.md'), adr);
+
+      // Test with invalid format - should default to text for check
+      const checkResult = await runCli(['check', '--format', 'xml'], tempDir);
+      expect(checkResult.exitCode).toBe(0);
+      expect(checkResult.stdout).toContain('✓ All 1 ADRs look good.');
+
+      // Test with invalid format - should default to json for affected  
+      const affectedResult = await runCli(['affected', '--base', 'HEAD', '--format', 'xml'], tempDir);
+      expect(affectedResult.exitCode).toBe(0);
+      // Should be JSON (affected defaults to json)
+      const jsonOutput = JSON.parse(affectedResult.stdout);
+      expect(jsonOutput).toHaveProperty('changed');
+      expect(jsonOutput).toHaveProperty('affected');
+    });
+  });
 });
