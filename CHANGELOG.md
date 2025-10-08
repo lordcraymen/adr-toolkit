@@ -1,3 +1,10 @@
+# [3.3.0](https://github.com/lordcraymen/adr-toolkit/compare/v3.2.0...v3.3.0) (2025-10-08)
+
+
+### Features
+
+* add structured output modes for agent integration (resolves [#16](https://github.com/lordcraymen/adr-toolkit/issues/16)) ([2f678cd](https://github.com/lordcraymen/adr-toolkit/commit/2f678cd52bab8e5f33496ba7ecfbb5083d0740fa))
+
 # [3.2.0](https://github.com/lordcraymen/adr-toolkit/compare/v3.1.2...v3.2.0) (2025-10-08)
 
 
