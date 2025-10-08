@@ -1,6 +1,6 @@
 {
   "name": "@lordcraymen/adr-toolkit",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "CLI tooling to bootstrap, validate and publish Architecture Decision Records.",
   "type": "module",
   "main": "dist/index.js",

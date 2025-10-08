@@ -1,3 +1,10 @@
+## [3.1.1](https://github.com/lordcraymen/adr-toolkit/compare/v3.1.0...v3.1.1) (2025-10-08)
+
+
+### Bug Fixes
+
+* normalize file paths to use forward slashes in initWorkspace function ([6e6bc02](https://github.com/lordcraymen/adr-toolkit/commit/6e6bc025514e1280668595840f41e42801fd773b))
+
 # [3.1.0](https://github.com/lordcraymen/adr-toolkit/compare/v3.0.0...v3.1.0) (2025-10-08)
 
 
