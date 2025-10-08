@@ -1,2 +1,0 @@
-# Husky test 
-Updated ADR system 

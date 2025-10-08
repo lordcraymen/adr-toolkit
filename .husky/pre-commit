@@ -4,7 +4,6 @@ npx lint-staged
 # Ensure project builds successfully
 npm run build
 
-# Keep ADR documentation up to date
-npx adrx build
-
-echo "✅ Pre-commit checks passed! Remember to run 'npm test' before pushing."
+echo "✅ Pre-commit checks passed!"
+echo "💡 ADR build skipped to avoid commit loops."
+echo "🔄 Run 'npm run adr:update' manually when ADR files change."
