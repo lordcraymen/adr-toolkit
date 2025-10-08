@@ -1,3 +1,10 @@
+## [3.3.2](https://github.com/lordcraymen/adr-toolkit/compare/v3.3.1...v3.3.2) (2025-10-08)
+
+
+### Bug Fixes
+
+* update package version to 3.3.1 in package.json and package-lock.json ([5fcb51e](https://github.com/lordcraymen/adr-toolkit/commit/5fcb51ea80f092f05d0e3b6ec18229f00d0a590f))
+
 ## [3.3.1](https://github.com/lordcraymen/adr-toolkit/compare/v3.3.0...v3.3.1) (2025-10-08)
 
 
