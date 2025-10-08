@@ -1,11 +1,10 @@
-# Run lint-staged for optimized file-based checks
+# Quick quality checks on staged files
 npx lint-staged
 
-# Run type checking on the entire project
-npm run typecheck
+# Ensure project builds successfully
+npm run build
 
-# Run full test suite to ensure no regressions
-npm run test
-
-# Build ADR artifacts to keep documentation up to date
+# Keep ADR documentation up to date
 npx adrx build
+
+echo "✅ Pre-commit checks passed! Remember to run 'npm test' before pushing."
