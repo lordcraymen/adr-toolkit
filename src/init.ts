@@ -72,9 +72,9 @@ export async function initWorkspace(cwd: string = process.cwd(), options: { inte
     const target = path.join(cwd, item.target);
     const wasCreated = await copyFileIfMissing(source, target);
     if (wasCreated) {
-      created.push(item.target);
+      created.push(item.target.replace(/\\/g, '/'));
     } else {
-      skipped.push(item.target);
+      skipped.push(item.target.replace(/\\/g, '/'));
     }
   }
 
@@ -82,9 +82,9 @@ export async function initWorkspace(cwd: string = process.cwd(), options: { inte
   const adrIndexPath = path.join(cwd, ADR_DIRECTORY, 'README.md');
   if (!(await pathExists(adrIndexPath))) {
     await copyFileIfMissing(path.join(templateRoot, 'adr', 'README.seed.md'), adrIndexPath);
-    created.push(path.relative(cwd, adrIndexPath));
+    created.push(path.relative(cwd, adrIndexPath).replace(/\\/g, '/'));
   } else {
-    skipped.push(path.relative(cwd, adrIndexPath));
+    skipped.push(path.relative(cwd, adrIndexPath).replace(/\\/g, '/'));
   }
 
   // Handle ADR Guidelines with smart prompting
