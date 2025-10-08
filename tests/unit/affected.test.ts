@@ -165,4 +165,118 @@ summary: "Test summary"
       expect(result.affected).toHaveLength(0);
     });
   });
+
+  describe('runAffected with different output formats', () => {
+    it('should produce JSON output by default', async () => {
+      const adr = `---
+title: "Test Decision"
+status: "Accepted"
+summary: "Test summary"
+modules: ["src/components"]
+---
+# Test Decision`;
+
+      await writeFile(join(tempDir, 'docs', 'adr', 'ADR-0001-test.md'), adr);
+
+      // Mock git diff to return changed files
+      mockGitDiffNames.mockResolvedValue(['src/components/Button.tsx']);
+
+      // Mock console.log to capture JSON output
+      const consoleLogs: string[] = [];
+      const originalLog = console.log;
+      console.log = (...args: any[]) => {
+        consoleLogs.push(args.join(' '));
+      };
+
+      const result = await runAffected('main', tempDir, 'json');
+
+      console.log = originalLog;
+
+      expect(result.changed).toEqual(['src/components/Button.tsx']);
+      expect(result.affected).toEqual(['docs/adr/ADR-0001-test.md']);
+
+      // Check that JSON was output to console
+      expect(consoleLogs).toHaveLength(1);
+      const outputJson = JSON.parse(consoleLogs[0]);
+      expect(outputJson).toMatchObject({
+        changed: ['src/components/Button.tsx'],
+        affected: ['docs/adr/ADR-0001-test.md']
+      });
+    });
+
+    it('should produce human-readable text output when format is text', async () => {
+      const adr = `---
+title: "Test Decision"
+status: "Accepted"
+summary: "Test summary"
+modules: ["src/components"]
+---
+# Test Decision`;
+
+      await writeFile(join(tempDir, 'docs', 'adr', 'ADR-0001-test.md'), adr);
+
+      // Mock git diff to return changed files
+      mockGitDiffNames.mockResolvedValue(['src/components/Button.tsx', 'README.md']);
+
+      // Mock console.log to capture text output
+      const consoleLogs: string[] = [];
+      const originalLog = console.log;
+      console.log = (...args: any[]) => {
+        consoleLogs.push(args.join(' '));
+      };
+
+      const result = await runAffected('main', tempDir, 'text');
+
+      console.log = originalLog;
+
+      expect(result.changed).toEqual(['src/components/Button.tsx', 'README.md']);
+      expect(result.affected).toEqual(['docs/adr/ADR-0001-test.md']);
+
+      // Check that text was output (not JSON)
+      expect(consoleLogs.length).toBeGreaterThan(0);
+      const allOutput = consoleLogs.join('\n');
+      expect(allOutput).toContain('Changed files: 2');
+      expect(allOutput).toContain('- src/components/Button.tsx');
+      expect(allOutput).toContain('- README.md');
+      expect(allOutput).toContain('Affected ADRs: 1');
+      expect(allOutput).toContain('- docs/adr/ADR-0001-test.md');
+      
+      // JSON parsing should fail for the first log (which should be human readable)
+      expect(() => JSON.parse(consoleLogs[0])).toThrow();
+    });
+
+    it('should handle empty results with text format', async () => {
+      const adr = `---
+title: "Test Decision"
+status: "Accepted"
+summary: "Test summary"
+---
+# Test Decision`;
+
+      await writeFile(join(tempDir, 'docs', 'adr', 'ADR-0001-test.md'), adr);
+
+      // Mock git diff to return empty array
+      mockGitDiffNames.mockResolvedValue([]);
+
+      // Mock console.log to capture text output
+      const consoleLogs: string[] = [];
+      const originalLog = console.log;
+      console.log = (...args: any[]) => {
+        consoleLogs.push(args.join(' '));
+      };
+
+      const result = await runAffected('main', tempDir, 'text');
+
+      console.log = originalLog;
+
+      expect(result.changed).toEqual([]);
+      expect(result.affected).toEqual([]);
+
+      // Check that text was output showing zero counts
+      expect(consoleLogs.length).toBeGreaterThan(0);
+      const allOutput = consoleLogs.join('\n');
+      expect(allOutput).toContain('Changed files: 0');
+      expect(allOutput).toContain('Affected ADRs: 0');
+    });
+  });
 });
