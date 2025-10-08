@@ -20,13 +20,27 @@ program
 program
   .command('init')
   .description('Create ADR directories and supporting templates')
-  .action(async () => {
-    const { created, skipped } = await initWorkspace();
-    if (created.length > 0) {
-      console.log(`Created: ${created.join(', ')}`);
-    }
-    if (skipped.length > 0) {
-      console.log(`Skipped existing: ${skipped.join(', ')}`);
+  .option('--dry-run', 'Show what files would be created without creating them')
+  .action(async (options: { dryRun?: boolean }) => {
+    const { created, skipped } = await initWorkspace(process.cwd(), { dryRun: options.dryRun });
+    if (options.dryRun) {
+      console.log('Files that would be created:');
+      if (created.length > 0) {
+        console.log(`  ${created.join('\n  ')}`);
+      } else {
+        console.log('  (none - all files already exist)');
+      }
+      if (skipped.length > 0) {
+        console.log('\nFiles that would be skipped (already exist):');
+        console.log(`  ${skipped.join('\n  ')}`);
+      }
+    } else {
+      if (created.length > 0) {
+        console.log(`Created: ${created.join(', ')}`);
+      }
+      if (skipped.length > 0) {
+        console.log(`Skipped existing: ${skipped.join(', ')}`);
+      }
     }
   });
 
