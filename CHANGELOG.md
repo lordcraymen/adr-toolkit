@@ -1,3 +1,10 @@
+## [3.1.2](https://github.com/lordcraymen/adr-toolkit/compare/v3.1.1...v3.1.2) (2025-10-08)
+
+
+### Bug Fixes
+
+* add unit and integration tests to pre-commit checks ([4f97024](https://github.com/lordcraymen/adr-toolkit/commit/4f97024601e4b586ba87bf1b92243f8a68c13d77))
+
 ## [3.1.1](https://github.com/lordcraymen/adr-toolkit/compare/v3.1.0...v3.1.1) (2025-10-08)
 
 
