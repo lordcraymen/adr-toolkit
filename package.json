@@ -27,6 +27,7 @@
     "test:integration": "vitest run tests/integration/",
     "test:e2e": "vitest run tests/e2e/",
     "test:coverage": "vitest run --coverage",
+    "prepare": "husky",
     "semantic-release": "semantic-release",
     "commit": "git-cz"
   },
@@ -49,6 +50,11 @@
       "path": "./node_modules/cz-conventional-changelog"
     }
   },
+  "lint-staged": {
+    "src/**/*.{ts,js}": [
+      "eslint --fix"
+    ]
+  },
   "dependencies": {
     "commander": "^11.1.0",
     "fast-glob": "^3.3.2",
@@ -67,6 +73,8 @@
     "commitizen": "^4.3.1",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.57.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.3",
     "semantic-release": "^24.2.9",
     "tsup": "^8.0.2",
     "typescript": "5.3.3",
