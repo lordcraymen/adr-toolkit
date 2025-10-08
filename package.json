@@ -64,7 +64,7 @@
   "devDependencies": {
     "@cucumber/cucumber": "^12.2.0",
     "@cucumber/gherkin": "^35.1.0",
-    "@lordcraymen/adr-toolkit": "^3.1.2",
+    "@lordcraymen/adr-toolkit": "^3.3.1",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^11.0.6",
