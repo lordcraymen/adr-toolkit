@@ -114,6 +114,26 @@ The toolkit also exposes programmatic helpers:
 
 Each helper accepts an optional working directory argument so you can run the tooling from scripts or tests. The `*WithConfig` variants allow you to pass custom configuration objects for advanced use cases.
 
+### TypeScript Types
+
+All key TypeScript types are exported from the main entry point for downstream tool integration:
+
+```typescript
+import type {
+  AdrIndex,
+  AdrDigest,
+  AdrDocument,
+  AdrFrontmatter,
+  CheckResult,
+  BuildResult,
+  AffectedResult,
+  ValidationError,
+  OutputFormat
+} from '@lordcraymen/adr-toolkit';
+```
+
+These types enable auto-completion and validation in TypeScript projects that consume ADR artifacts or integrate with the toolkit's API.
+
 ## Continuous Integration
 
 A reusable GitHub Actions workflow lives at `.github/workflows/ci.yml`. It runs on Node.js 18, 20, and 22 using `npm ci` followed by `lint`, `typecheck`, `test`, and `build`.
