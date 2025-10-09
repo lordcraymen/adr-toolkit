@@ -1,3 +1,11 @@
+# [3.4.0](https://github.com/lordcraymen/adr-toolkit/compare/v3.3.2...v3.4.0) (2025-10-09)
+
+
+### Features
+
+* add explicit type exports for improved discoverability ([59d7172](https://github.com/lordcraymen/adr-toolkit/commit/59d71725181ee0d15d0630a165efa2271958d1d0)), closes [#18](https://github.com/lordcraymen/adr-toolkit/issues/18)
+* export types module from main entry point ([75d144c](https://github.com/lordcraymen/adr-toolkit/commit/75d144cdda141828ce39d3192e78792c29117dad)), closes [#18](https://github.com/lordcraymen/adr-toolkit/issues/18)
+
 ## [3.3.2](https://github.com/lordcraymen/adr-toolkit/compare/v3.3.1...v3.3.2) (2025-10-08)
 
 
