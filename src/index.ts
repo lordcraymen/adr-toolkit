@@ -7,3 +7,4 @@ export * from './affected.js';
 export * from './pr-comment.js';
 export * from './config.js';
 export * from './config-cli.js';
+export * from './types.js';
